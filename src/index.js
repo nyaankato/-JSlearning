@@ -6,23 +6,37 @@ class Menu extends React.Component {
     constructor() {
         super();
         this.state = {
-            clicked: false
-        };
-        this.handleClick = this.handleClick.bind(this);
+            displayTictactoe : false
+         };
     }
 
-    handleClick() {
+    showTictactoe() {
         this.setState({
-            clicked: true
+            displayTictactoe: true
+        });
+    }
+
+    hideTictactoe() {
+        this.setState({
+            displayTictactoe: false
         });
     }
 
     render() {
+        if (this.state.displayTictactoe)
+            return(
+            <div>
+                <TicTacToeGame />
+                <button className="menu" onClick = {() => this.hideTictactoe()}>
+                    Back to menu
+                </button>
+            </div>
+            );
+
         return (
             <div className="menu">
-                <button className="tic-tac-toe" onClick = {() => this.handleClick()}>
+                <button className="tic-tac-toe" onClick = {() => this.showTictactoe()}>
                     Tic-tac-toe
-                    {this.state.clicked ? <TicTacToeGame /> : null}
                 </button>
             </div>
         );
