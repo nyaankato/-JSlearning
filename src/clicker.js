@@ -2,25 +2,13 @@ import React from 'react';
 import './index.css';
 import autoclickImg from './autoclicker.png';
 
-class Autoclicker extends React.Component {
-
-    //TODO: use props not state here
-    constructor(props){
-        super(props);
-        this.state = {
-            number: this.props.number,
-            cookiePerSecond : this.state.number * 5,
-            price : this.state.number * 10
-            //isAvailable : props.isAvailable
-        }
-    }
-    render() {
-        return (
-            <div>
-                <div className="autoclicker">new Autoclicker!</div>
-            </div>
-        );
-    }
+function Autoclicker(props){
+    return (
+        <li key = {props.index}>
+            <div className="autoclicker">Autoclicker #{props.index}</div>
+            <div className="autoclicker">Cookies per second: {props.cookiePerSecond}</div>
+        </li>
+    );
 }
 
 class Board extends React.Component {
@@ -31,19 +19,9 @@ class Board extends React.Component {
              cookiePerClick : 1,
              cookiePerSecond : 0,
              autoclickers: [],
-             //autoclickers: [],
              autoclickerPrice: 10
          }
     }
-
-    // renderArticles(articles) {
-    //     if (articles.length > 0) {
-    //         return articles.map((article, index) => (
-    //             <Article key={index} article={article} />
-    //         ));
-    //     }
-    //     else return [];
-    // }
 
     componentDidMount() {
         setInterval(() => this.setState({ cookieNum: this.state.cookieNum + this.state.cookiePerSecond}), 1000)
@@ -53,10 +31,10 @@ class Board extends React.Component {
         clearInterval(this.interval);
     }
 
-    renderAutoclicker(i) {
+    renderAutoclicker(index, cookiePerSecond) {
         return <Autoclicker
-            number = {i}
-        />
+        index = {index}
+        cookiePerSecond = {cookiePerSecond}/>
     }
 
     increaseCookie() {
@@ -70,38 +48,33 @@ class Board extends React.Component {
             alert("Not enough cookies!");
             return;
         }
-        //this.state.autoclickers.push();
         const newCookieValue = this.state.cookieNum - this.state.autoclickerPrice;
         const autoclickers = this.state.autoclickers;
-        const newAutoclicker = this.renderAutoclicker(autoclickers.length + 1)
-        autoclickers.push({autoclicker : newAutoclicker});
+        const cookiePerSecondForNewAutoclicker = (autoclickers.length + 1) * 10;
+        const newAutoclicker = {autoclicker : {index : autoclickers.length + 1, cookiePerSecond: cookiePerSecondForNewAutoclicker}}
+        autoclickers.push(newAutoclicker);
+
+        const newTotalCookiePerSecondValue = this.state.cookiePerSecond + cookiePerSecondForNewAutoclicker;
+        const newAutoclickerPrice = this.state.autoclickerPrice + this.state.autoclickers.length * 20;
+
         this.setState({autoclickers: autoclickers});
-        // let newAutoclickerValue = this.state.autoclickers.length * 5;
-        const newCookiesPerSecondValue = this.state.cookiePerSecond + this.state.autoclickers[this.state.autoclickers.length - 1].cookiePerSecond;
-        const newAutoclickerPrice = this.state.autoclickerPrice + this.state.autoclickers.length * 20
         this.setState({cookieNum : newCookieValue});
-        // this.setState({autoclickers: this.state.autoclickers.push(newAutoclickerValue)});
-        this.setState({cookiePerSecond : newCookiesPerSecondValue});
+        this.setState({cookiePerSecond : newTotalCookiePerSecondValue});
         this.setState({autoclikerPrice : newAutoclickerPrice});
-        // //return Autoclicker({value=)};
-        // this.renderAutoclicker(this.state.autoclickers.length - 1)
     }
 
     render() {
         const autoclickers = this.state.autoclickers;
-        const autoclickersView = autoclickers.map((autoclicker, index) =>
+        const autoclickersView = autoclickers.map((value, index) =>
         {
             return (
-                <li key = {index}>
-                    <div className="autoclicker">Autoclicker #{index}</div>
-                    <div className="autoclicker">Cookies per second: {autoclicker.cookiePerSecond}</div>
-                </li>
+                this.renderAutoclicker(value.autoclicker.index, value.autoclicker.cookiePerSecond)
             );
         });
         return (
              <div>
                  <div className="cookies">Cookies num: {this.state.cookieNum}</div>
-                 <div className="cookies">Cookies per second: {this.state.cookiePerSecond}</div>
+                 <div className="cookies">Total cookies per second: {this.state.cookiePerSecond}</div>
                  <button className="click" onClick= {() => this.increaseCookie()}>
                      Click!
                  </button>
