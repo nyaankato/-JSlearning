@@ -10,11 +10,6 @@ function Square (props) {
 }
 
 class Board extends React.Component {
-    newGame(){
-        // this.setState(
-        //     {squares : Array(9).fill(null),
-        //         xIsNext : true})
-    }
 
     renderSquare(i) {
         return <Square
@@ -26,9 +21,6 @@ class Board extends React.Component {
     render() {
         return (
             <div>
-                <button className="restart" onClick= {() => this.newGame()}>
-                    Restart
-                </button>
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
