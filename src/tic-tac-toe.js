@@ -54,29 +54,34 @@ class TicTacToeGame extends React.Component {
         super(props);
         this.state = {
             history: [{squares: Array(9).fill(null)},],
-            xIsNext : true
+            xIsNext : true,
+            stepNumber: 0
     }}
 
     handleClick(i) {
-        const history = this.state.history;
+        const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         if (calculateWinner(squares) || squares[i])
             return;
         squares[i] = this.state.xIsNext ? 'X' : 'O';
-        // history.concat([{
-        // squares: squares,
-        // }]);
         this.setState({
             history: history.concat([{
                 squares: squares
             }]),
-            xIsNext : !this.state.xIsNext});
+            xIsNext : !this.state.xIsNext,
+            stepNumber: history.length});
     }
 
+    jumpTo(i) {
+        this.setState({
+            stepNumber: i,
+            xIsNext: (i % 2) === 0
+        });
+    }
     render() {
         const history = this.state.history;
-        const current = history[history.length - 1];
+        const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
         const moves = history.map((step, move) =>
         {
@@ -84,7 +89,7 @@ class TicTacToeGame extends React.Component {
                 'Перейти к ходу #' + move :
                 'К началу игры';
             return (
-            <li>
+            <li key = {move}>
                 <button onClick={() => this.jumpTo(move)}>{desc}</button>
             </li>
         );
@@ -113,11 +118,6 @@ class TicTacToeGame extends React.Component {
     }
 }
 export default TicTacToeGame
-
-// ReactDOM.render(
-//     <Game />,
-//     document.getElementById('root')
-// );
 
 function calculateWinner(squares) {
     const lines = [
